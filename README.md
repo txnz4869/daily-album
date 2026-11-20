@@ -1,1 +1,86 @@
-# daily-album
+# Travel Album · JAPAN
+
+一个单文件的旅行相册网站：照片沿着方框边缘逆时针流动，中间是会躲开鼠标的点阵大字，点进去是横向滑动的章节页。
+
+## 互动
+
+- **照片环**：滚轮、触摸拖动或方向键推动照片环，松手后带惯性停下；没人操作时会自己慢慢转，鼠标停在照片上时暂停。手机上先轻点照片预览中央粒子的章节文字和照片颜色，再点同一张或中间的「进入章节」才跳转；滑动仍用于推动照片环。
+- **点阵字**：鼠标靠近时点会散开、再弹回原位。悬停任意照片，点阵会重组成那一章的名字，并染上那张照片的颜色。
+- **章节页**：横向惯性滚动，照片保持原始比例，带视差。底部有两个主菜单：**风格**把整章照片实时印成 `原图 / 红蓝 / 蓝晒 / 色块` 四种样子（键盘 1–4），色块模式会给出每张照片的 5 个主色；**滤镜**用下载自 G'MIC 的 `.cube` LUT 套上 `富士 / 佳能 / 理光` 三种观感（键盘 5–7），风格与滤镜互斥。滤镜文件在 `photos/luts/`，来源和授权说明见其中的 `SOURCES.md`。
+- **单张大图**：在章节页点任意照片打开。点阵从缩略图里飞出来，由粗到细显影成照片；章节当前是红蓝、蓝晒、色块或某个滤镜时，大图也显影成那个样子。鼠标变成放大镜（滚轮调倍数，放到足够大会直接显示原图像素），放大镜里永远是原片，旁边显示指针下的色号和这张照片的 5 个主色（点击复制）。← → 换张，1–4 换风格、5–7 换滤镜，Esc、Close 或点空白处关闭；手机上按住照片拖动看细节。网址会变成 `#/ch/章/张/view`，可以直接分享到某一张，浏览器返回键可以关掉大图。风格作品的署名显示在大图侧栏里。
+- **声音**：进站默认开启；若浏览器限制自动播放，第一次触摸或按键时自动接通（滚轮不算），点顶部的 Sound 可以关掉，关闭后不会因后续触摸自动重新开启。每一章有一种由浏览器现场合成的环境声；首页划过照片会弹出一个日本五声音阶（都节音阶）的音，滚动照片环就是一段旋律。大图里每章有自己的一套声音（聚拢、显影、成像、切换、关闭各不相同），放大镜划过照片时，会把指针下的亮度变成音高。没有使用任何音乐文件。
+
+- **作者页**：顶部 About、首页署名和章节页署名都进入 `#/about`，沿用相册的橙色幕布转场，展示作者和可直接跳转的社交图标。个人信息在 `THEME.author` 中配置。
+
+## 本地运行
+
+需要用本地服务器打开（直接双击 `index.html` 时，浏览器不允许读取照片像素：首页点阵字仍会用 `photos/tints.js` 里预先算好的色块染色，但风格切换和大图显影会失效）：
+
+```bash
+python3 -m http.server 8765
+```
+
+然后访问 http://localhost:8765 。字体来自 Google Fonts，首次打开需要联网。
+
+## 换照片
+
+照片在 `photos/sq/`（640×640 方图，用在照片环上）和 `photos/full/`（长边 1600，用在章节页上），两边文件名一致。章节、照片和图注都在 `index.html` 顶部的 `CHAPTERS` 数据里；标题、首页大字、字体、音阶和动效参数在旁边的 `THEME` 里。整理好的照片可以用 `skills/photo-album/scripts/prepare_photos.py` 生成，它会顺带更新 `photos/tints.js`；手动替换了 `photos/sq/` 里的图，要再跑一次 `python3 skills/photo-album/scripts/bake_tints.py`。
+
+## 用你自己的照片做一个
+
+仓库里带了一个 skill：[`skills/photo-album/`](skills/photo-album/SKILL.md)。把它和你的照片文件夹一起交给任何一个 agent（Claude Code、Codex、Cursor 等），它会按下面的步骤做出一个结构相同、风格属于你自己照片的网站：
+
+1. 量照片：主色、明暗、冷暖、夜景比例，并生成一张缩略图总览；
+2. 从这些数据里读出一份"风格 DNA"：纸色、强调色、字体、动效性格、粒子形态、风格台效果、音阶、每章的声音；
+3. 用几个问题跟你确认；
+4. 把 DNA 填进模板。
+
+`index.html` 顶部标了「风格区」的地方是可变的，其余是引擎。skill 的原理和规则写在 `skills/photo-album/references/` 里。
+
+## 署名与版权
+
+- 照片为作者本人拍摄，版权归作者所有，未经许可请勿转载或使用。
+- 以下三张是用第三方审美 Skill 生成的风格作品，网站里保留原样并署名：
+  - Red Steel Rising：mono-color · Yan Liu
+  - Neon Canyon：photo-abstract-editorial · @AM.（CC BY-NC-SA，仅限非商业用途）
+  - 绿色午后：gc-minimal-zine-poster · LiamGvchi
+- 照片环与点阵字的交互结构参考了 Framer 模板 Squareo（Iconic Graphics）的思路；代码、设计与素材均为原创，未使用原站的代码和素材。
+
+## Docker 部署
+
+镜像由 CNB 流水线在 `main` 分支推送后构建，支持 `linux/amd64` 和 `linux/arm64` 双架构，并推送到当前仓库的 Docker 制品库。
+
+在目标机器上登录 CNB 制品库，然后直接运行：
+
+```bash
+docker login docker.cnb.cool -u cnb -p "${CNB_TOKEN}"
+docker run -d --name travel-album \
+  --restart unless-stopped \
+  -p 8080:80 \
+  docker.cnb.cool/halo_coding/travel-album:latest
+```
+
+打开 http://localhost:8080 即可访问。
+
+也可以用 docker-compose：
+
+```yaml
+services:
+  travel-album:
+    image: docker.cnb.cool/halo_coding/travel-album:latest
+    container_name: travel-album
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+```
+
+保存为 `docker-compose.yml` 后运行 `docker compose up -d`。
+
+登录信息可以用环境变量传给 `docker login`，避免命令里出现明文 token：
+
+```bash
+echo "${CNB_TOKEN}" | docker login docker.cnb.cool -u cnb --password-stdin
+docker compose up -d
+```
+
+私有镜像需要先在目标机器执行 `docker login docker.cnb.cool -u cnb -p "${CNB_TOKEN}"`。`CNB_TOKEN` 是 CNB 访问令牌，不是仓库流水线里的临时令牌。

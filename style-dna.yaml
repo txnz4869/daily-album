@@ -1,0 +1,43 @@
+# 风格 DNA：日常随手记（已按用户选择定稿：方向 A「纸上印章」）
+
+trip: "日常随手记"                        # 用户原话
+place: 上海（依据：EXIF GPS 与整组照片的都市夜色气质）
+evidence:                                  # analyze_photos.py 实测
+  tone: mid / contrast: normal / chroma: moderate / temperature: neutral
+  hue_spread: mixed / dominant_hue: 256°（蓝）/ night_share: .43 / portrait_share: 1.0
+  accent_candidates:
+    - 红 #E62420 来自 img-3836（色相 1°，chroma .776，最高的鲜明色；img-3627/3781/3888/3957 也反复出现红）
+    - 蓝 #115FC2 来自 img-3947（色相 214°，夜的主色；img-3944~3958 一整簇深蓝夜）
+    - 棕 #B38651 来自 img-3517（暖木/食物，零星）
+    - 橄榄 #807D3B 来自 img-3945（零星）
+
+# ---- 定稿：纸上印章（浅纸 + 红 + 人文衬线）----
+color:
+  paper: "#FAFAF8"      # tone mid、night_share .43 < .5 → 浅纸；neutral 带一点冷
+  ink: "#121212"
+  accent: "#E62420"     # 来自 img-3836 的红（色相 1°），多张照片反复出现；像日记本上一枚红印章
+  on_accent: "#FAFAF8"
+type:
+  display: Fraunces     # 人文衬线，≥700 字重；像手写日记
+  stretch: normal / case: mixed
+  cjk: Noto Serif SC
+  why: 日常记录、手帐感，衬线比无衬线更像"写下来"
+hero: { word: Notes, sub: "Daily / 26", line: "Shanghai · 街头 · 白天到夜晚" }
+motion: { character: 柔软, drift: .0018, follow: .05, spring: .035, damp: .88, repel: 75, gather: 1200, develop: 1700 }
+texture:
+  dots: square          # 手机原生像素，呼应"随手拍"
+  styles: [orig, riso, cyanotype, block]   # riso 红蓝双色呼应母题；蓝晒呼应蓝夜；色块给调色板
+  filters: [fuji, canon, ricoh]            # LUT 滤镜：富士 Classic Chrome / 佳能 Portra / 理光 Velvia，见 photos/luts/SOURCES.md
+sound: { scale: "[0,2,4,7,9] 宫调五声（中国）", base: 60, presence: .6 }
+chapters:
+  - { en: Bright, zh: 明, ambient: 风 + 鸟鸣,        voice: wood }
+  - { en: Warm,   zh: 暖, ambient: lo-fi 电钢和弦,    voice: keys }
+  - { en: Red,    zh: 红, ambient: 稀疏拨弦,          voice: pluck }
+  - { en: Blue,   zh: 蓝, ambient: 慢合成器琶音,      voice: synth }
+  - { en: Dark,   zh: 暗, ambient: 城市低鸣 + 钟,     voice: bell }
+  - { en: Black,  zh: 黑, ambient: 黑胶 + lo-fi 电钢, voice: keys }
+swaps: []
+
+# 防撞衫检查（对照 JAPAN DNA）：纸（暖白→冷白）、强调色相（17°橙→1°红）、
+# display 字体（Archivo→Fraunces）、动效（利落→柔软）、粒子（circle→square）、
+# 风格台（油墨/网点→红蓝/蓝晒）、音阶（都节→宫调五声）、主乐器（钟/合成器→木琴/电钢），8 项全不同。
